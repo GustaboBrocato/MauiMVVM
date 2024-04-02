@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MauiMVVM.Views.PageProductos"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:convert="clr-namespace:MauiMVVM.Utilities"
+    xmlns:cx="clr-namespace:MauiMVVM.ViewModels"
+    Title="PageProductos">
+    <ContentPage.Resources>
+        <convert:base64Image x:Key="BaseArray" />
+    </ContentPage.Resources>
+    <ContentPage.BindingContext>
+        <cx:ProductosViewModels />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <Grid
+            Margin="20"
+            BackgroundColor="#F0F0F0"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                Text="Descrip. Articulo"
+                VerticalOptions="CenterAndExpand" />
+            <Entry
+                Grid.Row="1"
+                Grid.Column="1"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                Text="{Binding Nombre}"
+                VerticalOptions="CenterAndExpand" />
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                Text="Precio. Articulo"
+                VerticalOptions="CenterAndExpand" />
+            <Entry
+                Grid.Row="2"
+                Grid.Column="1"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                Text="{Binding Precio}"
+                VerticalOptions="CenterAndExpand" />
+
+            <Image
+                x:Name="imgSitio"
+                Grid.Row="3"
+                Grid.Column="0"
+                Margin="0,0,0,10"
+                Aspect="AspectFit"
+                HeightRequest="200"
+                HorizontalOptions="FillAndExpand"
+                Source="{Binding Foto, Converter={StaticResource BaseArray}}"
+                VerticalOptions="CenterAndExpand"
+                WidthRequest="200" />
+
+            <Button
+                x:Name="btnTomarFoto"
+                Grid.Row="3"
+                Grid.Column="1"
+                Margin="10,0,0,20"
+                BackgroundColor="{DynamicResource TealPrimary}"
+                Command="{Binding FotoCommand}"
+                CommandParameter="{Binding .}"
+                CornerRadius="20"
+                FontSize="12"
+                HeightRequest="40"
+                HorizontalOptions="FillAndExpand"
+                SemanticProperties.Hint="Tomar Foto"
+                Text="Tomar Foto" />
+
+            <Button
+                Grid.Row="4"
+                Grid.Column="0"
+                Margin="5,5,5,5"
+                BackgroundColor="#007BFF"
+                Command="{Binding CreateCommand}"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                IsVisible="{Binding VisibilityCreate}"
+                Text="Crear Producto"
+                TextColor="White"
+                VerticalOptions="CenterAndExpand" />
+
+            <Button
+                Grid.Row="4"
+                Grid.Column="0"
+                Margin="5,5,5,5"
+                BackgroundColor="#007BFF"
+                Command="{Binding UpdateCommand}"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                IsVisible="{Binding VisibilityUpdate}"
+                Text="Actualizar Producto"
+                TextColor="White"
+                VerticalOptions="CenterAndExpand" />
+            <Button
+                Grid.Row="4"
+                Grid.Column="1"
+                Margin="5,5,5,5"
+                BackgroundColor="#DC3545"
+                Command="{Binding CleanCommand}"
+                FontSize="20"
+                HorizontalOptions="FillAndExpand"
+                Text="Limpiar"
+                TextColor="White"
+                VerticalOptions="CenterAndExpand" />
+
+        </Grid>
+    </ContentPage.Content>
+
+</ContentPage>
