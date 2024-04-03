@@ -11,20 +11,25 @@ namespace MauiMVVM.ViewModels
 {
     public class ProductosViewModels : BaseViewModel
     {
-        private ProductosController productosController = new ProductosController();
-        private int productId;
+        //Controlador SQLite
+        //private ProductosController productosController = new ProductosController();
+
+        //Controlador Firebase
+        private ProductosControllerFirebase productosControllerFirebase = new ProductosControllerFirebase();
+
+        private string productKey;
         private string _nombre;
         private double _precio;
         private string _foto;
-        private int _id;
+        private string _key;
         private bool _visibilityCreate;
         private bool _visibilityUpdate;
-        private Models.Productos _selectedProduct;
+        private Models.productosModel _selectedProduct;
 
-        public int Id
+        public string Key
         {
-            get { return _id; }
-            set { _id = value; OnPropertyChanged(); }
+            get { return _key; }
+            set { _key = value; OnPropertyChanged(); }
         }
 
         public string Nombre
@@ -57,7 +62,7 @@ namespace MauiMVVM.ViewModels
             set { _visibilityUpdate = value; OnPropertyChanged(); }
         }
 
-        public Models.Productos SelectedProduct
+        public Models.productosModel SelectedProduct
         {
             get { return _selectedProduct; }
             set
@@ -65,7 +70,7 @@ namespace MauiMVVM.ViewModels
                 _selectedProduct = value;
                 OnPropertyChanged();
 
-                // Display alert based on whether SelectedProduct is null or not
+                
                 ShowProductStatusAlert();
             }
         }
@@ -74,9 +79,8 @@ namespace MauiMVVM.ViewModels
         {
             CleanCommand = new Command(Cleaner);
             FotoCommand = new Command(() => TomarFoto());
-            if(productId == 0) { }
             CreateCommand = new Command(async () => await CreateData());
-            UpdateCommand = new Command(async () => await UpdateProducto(productId));
+            UpdateCommand = new Command(async () => await UpdateProducto(productKey));
 
         }
 
@@ -99,7 +103,7 @@ namespace MauiMVVM.ViewModels
         {
             if (SelectedProduct != null)
             {
-                productId = SelectedProduct.Id;
+                productKey = SelectedProduct.Key;
                 VisibilityCreate = false;
                 VisibilityUpdate = true;
             }
@@ -127,16 +131,16 @@ namespace MauiMVVM.ViewModels
 
             try 
             {
-                var product = new Models.Productos
+                var product = new Models.productosModel
                 {
                     Nombre = Nombre,
                     Precio = Precio,
                     Foto = Foto
                 };
 
-                if (productosController != null)
+                if (productosControllerFirebase != null)
                 {
-                    bool addedSuccessfully = await productosController.storeProducto(product);
+                    bool addedSuccessfully = await productosControllerFirebase.CrearProducto(product);
 
                     if (addedSuccessfully)
                     {
@@ -153,7 +157,7 @@ namespace MauiMVVM.ViewModels
             }
         }
 
-        async Task UpdateProducto(int id)
+        async Task UpdateProducto(string key)
         {
             if (Nombre == null)
             {
@@ -168,17 +172,17 @@ namespace MauiMVVM.ViewModels
 
             try
             {
-                var product = new Models.Productos
+                var product = new Models.productosModel
                 {
-                    Id = id,
+                    Key = key,
                     Nombre = Nombre,
                     Precio = Precio,
                     Foto = Foto
                 };
 
-                if (productosController != null)
+                if (productosControllerFirebase != null)
                 {
-                    bool addedSuccessfully = await productosController.storeProducto(product);
+                    bool addedSuccessfully = await productosControllerFirebase.CrearProducto(product);
 
                     if (addedSuccessfully)
                     {

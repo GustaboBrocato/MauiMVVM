@@ -12,18 +12,23 @@ namespace MauiMVVM.ViewModels
 {
     public class ListProductsViewModels : BaseViewModel
     {
-        private ObservableCollection<Models.Productos> _products;
-        private ProductosController productosController = new ProductosController();
+        private ObservableCollection<Models.productosModel> _products;
 
-        public ObservableCollection<Models.Productos> Products
+        //Controlador de SQLite
+        //private ProductosController productosController = new ProductosController();
+
+        //Controlador de Crud Firebase
+        private ProductosControllerFirebase productosControllerFirebase = new ProductosControllerFirebase();
+
+        public ObservableCollection<Models.productosModel> Products
         {
             get { return _products; }
             set { _products = value; OnPropertyChanged(); }
         }
 
-        private Models.Productos _selectedProduct;
+        private Models.productosModel _selectedProduct;
 
-        public Models.Productos SelectedProduct
+        public Models.productosModel SelectedProduct
         {
             get { return _selectedProduct; }
             set { _selectedProduct = value; OnPropertyChanged(); }
@@ -40,25 +45,25 @@ namespace MauiMVVM.ViewModels
             Navigation = navigation;
             GoToDetailsCommand = new Command<Type>(async (pageType) => await GoToDetails(pageType, SelectedProduct));
             NuevoProductoCommand = new Command<Type>(async (pageType) => await NuevoProducto(pageType));
-            DeleteCommand = new Command(async () => await DeleteProducto(SelectedProduct.Id));
+            DeleteCommand = new Command(async () => await DeleteProducto(SelectedProduct.Key));
 
             loadProductos();
         }
 
         async Task loadProductos()
         {
-            List<Productos> listProductos;
+            List<productosModel> listProductos;
 
-            Products = new ObservableCollection<Productos>();
+            Products = new ObservableCollection<productosModel>();
 
             try
             {
-                listProductos = await productosController.getListProductos();
-                foreach(var product in listProductos)
+                listProductos = await productosControllerFirebase.GetListProductos();
+                foreach (var product in listProductos)
                 {
-                    Productos productos = new Productos
+                    productosModel productos = new productosModel
                     {
-                        Id = product.Id,
+                        Key = product.Key,
                         Nombre = product.Nombre,
                         Precio = product.Precio,
                         Foto = product.Foto,
@@ -74,7 +79,7 @@ namespace MauiMVVM.ViewModels
             }
         }
 
-        async Task GoToDetails(Type pageType, Models.Productos selectedProduct)
+        async Task GoToDetails(Type pageType, Models.productosModel selectedProduct)
         {
             if (selectedProduct != null)
             {
@@ -85,7 +90,7 @@ namespace MauiMVVM.ViewModels
                 viewModel.Nombre = selectedProduct.Nombre;
                 viewModel.Foto = selectedProduct.Foto;
                 viewModel.Precio = selectedProduct.Precio;
-                viewModel.Id = selectedProduct.Id;
+                viewModel.Key = selectedProduct.Key;
                 page.BindingContext = viewModel;
 
                 await Navigation.PushAsync(page);
@@ -102,24 +107,25 @@ namespace MauiMVVM.ViewModels
             await Navigation.PushAsync(page);           
         }
 
-        async Task DeleteProducto(int id)
+        async Task DeleteProducto(string key)
         {
             if(SelectedProduct != null)
             {
-                var tappedItem = Products.FirstOrDefault(item => item.Id == id);
+                var tappedItem = Products.FirstOrDefault(item => item.Key == key);
                 bool userConfirmed = await Application.Current.MainPage.DisplayAlert("Confirmación", "¿Está seguro de que desea eliminar este producto?", "Si", "No");
                 if (userConfirmed)
                 {
                     try
                     {
 
-                        if (productosController != null)
+                        if (productosControllerFirebase != null)
                         {
-                            int success = await productosController.deleteProducto(id);
+                            bool success = await productosControllerFirebase.deleteProducto(key);
 
-                            if (success != 0)
+                            if (success)
                             {
                                 Products.Remove(tappedItem);
+                                SelectedProduct = null;
 
                                 await Application.Current.MainPage.DisplayAlert("Atención", "Producto Eliminado", "OK");
                             }

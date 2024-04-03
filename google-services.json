@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "269102322272",
+    "project_id": "mauimvvm",
+    "storage_bucket": "mauimvvm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269102322272:android:6f035fb562a3b966546905",
+        "android_client_info": {
+          "package_name": "com.example.mauimvvm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2dQIQvB36mi6att2ZSg5NwGY1dE1g65Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
